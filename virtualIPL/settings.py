@@ -25,7 +25,7 @@ SECRET_KEY = 'qf$ha*gxqg8hx@k7-rjvf^7bki==xvk()$*4!l#sq_bgs8)$r@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://virtual-ipl-api.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['virtual-ipl-api.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
