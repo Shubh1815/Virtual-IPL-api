@@ -72,6 +72,7 @@ ROOT_URLCONF = 'virtualIPL.urls'
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://localhost:8000',
+    'https://virtual-ipl.herokuapp.com',
 )
 
 TEMPLATES = [
