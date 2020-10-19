@@ -100,10 +100,10 @@ WSGI_APPLICATION = 'virtualIPL.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hhcgieky',
-        'USER': 'hhcgieky',
-        'PASSWORD': '798P6QonyCI6KZnsE9A3q8nme-KnrJer',
-        'HOST': 'john.db.elephantsql.com',
+        'NAME': 'd761133slr1v7d',
+        'USER': 'xwhohygneqgudi',
+        'PASSWORD': '728eca987c112a08610ed4e4d144e6b7c54713d93d8e5b49d05dfcb634381b55',
+        'HOST': 'ec2-54-157-234-29.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
