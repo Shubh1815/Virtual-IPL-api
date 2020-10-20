@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.cache import cache
 from django.db.models import Sum, F
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
@@ -8,7 +9,7 @@ from .models import Team, Player
 from .serializer import PlayerSerializer, TeamSerializer
 # Create your views here.
 
-TOP10 = []
+cache.set('top10', [])
 
 @api_view(['GET'])
 def listPlayer(request):
@@ -20,9 +21,7 @@ def listPlayer(request):
 
 @api_view(['GET'])
 def top10(request):
-    global TOP10
-    TOP10 = TOP10[:10]
-    return Response({'Top10': TOP10})
+    return Response({'Top10': cache.get('top10')})
 
 @api_view(['GET'])
 def team(request, pk):
@@ -37,7 +36,7 @@ def team(request, pk):
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([permissions.IsAuthenticated])
 def assignTeam(request, pk):
-    global TOP10
+
     queryset = Player.objects.get(pk=pk)
 
     if request.method == 'GET':
@@ -61,7 +60,8 @@ def assignTeam(request, pk):
             team.budget -= price
             team.save()
 
-            TOP10.insert(0, serializer.data)
+            cache.set('top10', [ serializer.data ] + cache.get('top10'))
+            print(cache.get('top10'))
 
             return Response(serializer.data)
 
@@ -86,6 +86,7 @@ def assignTeam(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
 def leaderboard(request):
 
     teams = Player.objects.filter(team__isnull=False).values('team', budget=F('team__budget')).annotate(rating=Sum('player_rating')).order_by('-rating', '-budget')
