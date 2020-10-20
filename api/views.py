@@ -9,7 +9,7 @@ from .models import Team, Player
 from .serializer import PlayerSerializer, TeamSerializer
 # Create your views here.
 
-cache.set('top10', [])
+cache.set('top10', [], None)
 
 @api_view(['GET'])
 def listPlayer(request):
