@@ -93,8 +93,12 @@ TEMPLATES = [
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django_bmemcached.memcached.BMemcached',
+        'LOCATION': 'mc2.c1.ap-northeast-1.ec2.memcachier.com',
+        'OPTIONS': {
+            'username': '6A1C07',
+            'password': '31232402DDCC0189FC2ACD04E9B16443',
+        }
     }
 }
 

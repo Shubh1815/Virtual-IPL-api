@@ -13,6 +13,8 @@ django-rest-auth = "*"
 psycopg2 = "*"
 gunicorn = "*"
 whitenoise = "==4.1.4"
+python-binary-memcached = "*"
+django-bmemcached = "*"
 
 [requires]
 python_version = "3.8"
