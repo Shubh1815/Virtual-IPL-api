@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 
@@ -28,3 +29,10 @@ class Player(models.Model):
     def __str__(self):
         return self.player_name
 
+class Top10(models.Model):
+    top10 = ArrayField(
+        models.JSONField(),
+        size=10,
+        default=list,
+        blank=True,
+    )

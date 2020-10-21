@@ -1,15 +1,15 @@
 from django.shortcuts import render
-from django.core.cache import cache
 from django.db.models import Sum, F
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response 
 
-from .models import Team, Player
-from .serializer import PlayerSerializer, TeamSerializer
+import json
+
+from .models import Team, Player, Top10
+from .serializer import PlayerSerializer, TeamSerializer, Top10Serializer
 # Create your views here.
 
-cache.set('top10', [], None)
 
 @api_view(['GET'])
 def listPlayer(request):
@@ -21,7 +21,9 @@ def listPlayer(request):
 
 @api_view(['GET'])
 def top10(request):
-    return Response({'Top10': cache.get('top10')})
+    queryset = Top10.objects.all()
+    serializer = Top10Serializer(queryset.first())
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def team(request, pk):
@@ -60,8 +62,9 @@ def assignTeam(request, pk):
             team.budget -= price
             team.save()
 
-            cache.set('top10', [ serializer.data ] + cache.get('top10'))
-            print(cache.get('top10'))
+            queryset = Top10.objects.all().first()
+            queryset.top10 = ([json.dumps(serializer.data)] + queryset.top10)[:10]
+            queryset.save()
 
             return Response(serializer.data)
 

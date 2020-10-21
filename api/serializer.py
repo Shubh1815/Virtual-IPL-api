@@ -1,5 +1,5 @@
 from rest_framework import serializers 
-from .models import Team, Player 
+from .models import Team, Player, Top10
 
 TEAM_FORMAT = {
     'Batsmen': 4,
@@ -34,3 +34,7 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team 
         fields = '__all__'
  
+class Top10Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Top10
+        fields = '__all__'
