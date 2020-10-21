@@ -2,11 +2,11 @@ from rest_framework import serializers
 from .models import Team, Player, Top10
 
 TEAM_FORMAT = {
-    'Batsmen': 4,
-    'Spin Bowler': 2,
+    'Batsmen': 3,
+    'Spinners': 2,
     'Pace Bowler': 2,
     'All Rounder': 2,
-    'Wicket Keeper': 1,
+    'WK-Batsman': 2,
 }
 
 class PlayerSerializer(serializers.ModelSerializer):
