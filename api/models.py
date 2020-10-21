@@ -16,9 +16,9 @@ class Player(models.Model):
         choices=[
             ('All Rounder', 'All Rounder'),
             ('Batsmen', 'Batsmen'),
-            ('Spinners', 'Spin Bowler'),
+            ('Spin Bowler', 'Spin Bowler'),
             ('Pace Bowler', 'Pace Bowler'),
-            ('WK-Batsman', 'Wicket Keeper')
+            ('Wicket Keeper', 'Wicket Keeper')
         ]
     )
     player_rating = models.FloatField()
