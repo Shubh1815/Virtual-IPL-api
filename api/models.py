@@ -4,6 +4,8 @@ from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 class Team(models.Model):
+    class meta:
+        managed = True
     team_no = models.IntegerField(primary_key=True)
     budget = models.FloatField()
 
@@ -11,6 +13,8 @@ class Team(models.Model):
         return str(self.team_no)
 
 class Player(models.Model):
+    class meta:
+        managed = True
     player_name = models.CharField(max_length=100)
     player_type = models.CharField(max_length=15,
         choices=[
@@ -30,9 +34,14 @@ class Player(models.Model):
         return self.player_name
 
 class Top10(models.Model):
+    class meta:
+        managed = True
     top10 = ArrayField(
         models.JSONField(),
         size=10,
         default=list,
         blank=True,
     )
+
+    def __str__(self):
+        return "Top10"
