@@ -16,13 +16,13 @@ class Player(models.Model):
         choices=[
             ('All Rounder', 'All Rounder'),
             ('Batsmen', 'Batsmen'),
-            ('Spin Bowler', 'Spin Bowler'),
+            ('Spinners', 'Spin Bowler'),
             ('Pace Bowler', 'Pace Bowler'),
-            ('Wicket Keeper', 'Wicket Keeper')
+            ('WK-Batsman', 'Wicket Keeper')
         ]
     )
     player_rating = models.FloatField()
-    price = models.FloatField(default=0)
+    price = models.FloatField(default=0, null=True)
 
     team = models.ForeignKey(Team, related_name="players", on_delete=models.SET_NULL, null=True, blank=True)
 
