@@ -15,6 +15,10 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
+        """
+        Checks whether a team could buy the player or not.
+        Returns the data of the player if all conditions passes else raise a error
+        """
         team_no = str(data['team'])
         price = data['price']
         player_type = data['player_type']
