@@ -7,6 +7,9 @@ class Team(models.Model):
     team_no = models.IntegerField(primary_key=True)
     budget = models.FloatField()
 
+    captain_name = models.CharField(max_length=100, null=True, blank=True)
+    captain_rating = models.FloatField(default=0)
+
     def __str__(self):
         return str(self.team_no)
 

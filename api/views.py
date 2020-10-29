@@ -1,10 +1,9 @@
-from django.shortcuts import render
-from django.db.models import Sum, F, Case, When
+import json
+
+from django.db.models import Sum, F
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response 
-
-import json
+from rest_framework.response import Response
 
 from .models import Team, Player, Top10
 from .serializer import PlayerSerializer, TeamSerializer, Top10Serializer
@@ -30,28 +29,37 @@ def top10(request):
     """
     Return the list of player dicitionary, which contains the latest player that have been sold
     :param : Django request
-    :return : JSON object of array of player dictionary 
+    :return : JSON object of array of player dictionary
     """
 
     queryset = Top10.objects.all()
     serializer = Top10Serializer(queryset.first())
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 def team(request, pk):
     """
     Return the Team informations based on the primary key
-    :param : Django request, primary key 
+    :param : Django request, primary key
     :return : JSON object of a Team queryset
     """
-
     team = Team.objects.get(team_no=pk)
-    players = Player.objects.filter(team=pk)
+    if request.method == 'GET':
+        players = Player.objects.filter(team=pk)
 
-    team_serializer = TeamSerializer(team)
-    player_serializer = PlayerSerializer(players, many=True)
+        team_serializer = TeamSerializer(team)
+        player_serializer = PlayerSerializer(players, many=True)
 
-    return Response({'team': team_serializer.data , 'players': player_serializer.data })
+        return Response({'team': team_serializer.data , 'players': player_serializer.data })
+    
+    if request.method == 'PUT':
+        serializer = TeamSerializer(team, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data)
+        
+        return Response({ 'error': 'Try Again!'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([permissions.IsAuthenticated])
@@ -70,13 +78,13 @@ def assignTeam(request, pk):
     if request.method == 'PUT':
         """
         Update the team & price field of the player, based on the primary key
-        Returns the updated player 
+        Returns the updated player
         """
         serializer = PlayerSerializer(queryset, data=request.data)
 
         # Update Player only if the player doesn't belong to a team
         if queryset.team:
-            return Response({ 'error': 'Player is already sold'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Player is already sold'}, status=status.HTTP_400_BAD_REQUEST)
 
         if serializer.is_valid() and serializer.validate(request.data):
             serializer.save()
@@ -107,12 +115,12 @@ def assignTeam(request, pk):
 
         if team:
             # Adding the price of the player to the team, which had bought the player
-            team.budget += price 
+            team.budget += price
             team.save()
-             
-            queryset.price = 0 
-            queryset.team = None 
-            queryset.save() 
+
+            queryset.price = 0
+            queryset.team = None
+            queryset.save()
 
         serializer = PlayerSerializer(queryset)
 
@@ -124,9 +132,19 @@ def assignTeam(request, pk):
 def leaderboard(request):
     """
     :param : Django request
-    :return : JSON object of a array of team dictionary which contains, team_no, budget and the rating of the team
+    :return : JSON object of a array of team dictionary
+              which contains, team_no, budget and the rating of the team
     """
-    
-    teams = Player.objects.filter(team__isnull=False).values('team', budget=F('team__budget')).annotate(rating=Sum('player_rating')).order_by('-rating', '-budget')
+
+    # teams = Player.objects.filter(team__isnull=False)\
+    #         .values('team', budget=F('team__budget'))\
+    #         .annotate(rating=Sum('player_rating'))\
+    #         .order_by('-rating', '-budget')
+
+    teams = Player.objects.filter(team__isnull=False)\
+            .values('team', budget=F('team__budget'), captain_rating=F('team__captain_rating'))\
+            .annotate(rating=Sum('player_rating'))\
+            .values('team', 'budget', rating=F('rating')+F('captain_rating'))\
+            .order_by('-rating', '-budget')
 
     return Response(teams)
