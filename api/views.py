@@ -110,12 +110,16 @@ def assignTeam(request, pk):
         Removes the player from his team, and decrease his price to zero
         Returns the updated player
         """
+        player_name = queryset.player_name
         team = queryset.team
         price = queryset.price
 
         if team:
             # Adding the price of the player to the team, which had bought the player
             team.budget += price
+            if team.captain_name == player_name:
+                team.captain_name = None
+                team.captain_rating = 0
             team.save()
 
             queryset.price = 0
